@@ -8,11 +8,22 @@ summary(grades)
 corr <- round(cor(grades), 1)
 corr
 
+# Pie Chart Data Preparation
+denominator <- corr[,9][2] + corr[,9][3] + corr[,9][4] + corr[,9][5] + corr[,9][6] + corr[,9][7] + corr[,9][8]
+gre_percent <- (corr[,9][2] / denominator) * 100
+toefl_percent <- (corr[,9][3] / denominator) * 100
+ur_percent <- (corr[,9][4] / denominator) * 100
+sop_percent <- (corr[,9][5] / denominator) * 100
+lor_percent <- (corr[,9][6] / denominator) * 100
+cgpa_percent <- (corr[,9][7] / denominator) * 100
+research_percent <- (corr[,9][8] / denominator) * 100
+
+
 # Data Population
 library(e1071)
 plot(density(grades$Chance.of.Admit), main="Density Plot: Chance of Admit", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(grades$Chance.of.Admit), 2)))  
 
-# Box Plot for CGPA
+a# Box Plot for CGPA
 boxplot(grades$CGPA, main="CGPA", sub=paste("Outlier rows: ", boxplot.stats(grades$CGPA)$out))
 
 # All Relationships
@@ -49,6 +60,18 @@ points(actuals_preds$predicteds , col="blue")
 legend(89, 0.45, legend=c("actuals", "predicted"),
        col=c("red", "blue"), lty=3:3, cex=0.8)
 
+# Importance Pie Chart
+slices <- c(gre_percent, toefl_percent, ur_percent, sop_percent, lor_percent, cgpa_percent, research_percent)
+pieLabels <- c(paste("GRE: ", gre_percent, "%"), 
+          paste("TOEFL: ", toefl_percent, "%"), 
+          paste("University Rating: ", ur_percent, "%"), 
+          paste("SOP: ", sop_percent, "%"), 
+          paste("LOR: ", lor_percent, "%"), 
+          paste("CGPA: ", cgpa_percent, "%"), 
+          paste("Reserach: ", research_percent, "%"))
+
+pie(slices, labels = pieLabels, main="Variables Effect Pie Chart")
+
 # Model Accurecy Using Correlation
 correlation_accuracy <- cor(actuals_preds) * 100
 correlation_accuracy
@@ -56,3 +79,4 @@ correlation_accuracy
 # Model Accurecy Using Min Max Accuracy
 min_max_accuracy <- mean(apply(actuals_preds, 1, min) / apply(actuals_preds, 1, max)) * 100
 min_max_accuracy
+
